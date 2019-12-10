@@ -4,7 +4,7 @@ var ts = { |units|  (dur/24)*(units) }; // (timeStep) hardcoded to 24 units
 
 var which = [0,0,1,1,1];
 var times = [ts.(6),ts.(4),ts.(14),ts.(1)];
-var acc = [55,35,35];
+var acc = [55,25,25];
 
 SynthDef(\caracol, { | harm= #[0], amp=0.1, bufnum= 4224, which=0, out=0 |
 	var sig1, sig2, env;
@@ -31,26 +31,26 @@ SynthDef(\fm, {|freq=100, amp=0.5, out=0|
 }).add
 );
 
-caracol1= Pbind(\instrument, \caracol, \amp, 0.5, \harm, [0,5,9].midiratio,
-	\bufnum, 4224,   \dur, Penv(acc*1    ,[ts.(20),ts.(4)]), \which, Penv(which,times));
+caracol1= Pbind(\instrument, \caracol, \amp, 0.09, \harm, [0,5,9].midiratio,
+	\bufnum, 4224,   \dur, Penv(acc*1    ,[ts.(20),ts.(5)]), \which, Penv(which,times), \out, Prand((16..32),inf));
 
-caracol2= Pbind(\instrument, \caracol, \amp, 0.4, \harm, [-5,0,4,10,12,16,19].midiratio,
-	\bufnum, 4224,   \dur, Penv(acc*(1/3),[ts.(20),ts.(4)]), \which, Penv(which,times));
+caracol2= Pbind(\instrument, \caracol, \amp, 0.08, \harm, [-5,0,4,10,12,16,19].midiratio,
+	\bufnum, 4224,   \dur, Penv(acc*(1/3),[ts.(20),ts.(5)]), \which, Penv(which,times), \out, Prand((16..32),inf));
 
-caracol3= Pbind(\instrument, \caracol, \amp, 0.3, \harm, [-5,2,7,11].midiratio,
-	\bufnum, 4224,   \dur, Penv(acc*(1/5),[ts.(20),ts.(4)]), \which, Penv(which,times));
+caracol3= Pbind(\instrument, \caracol, \amp, 0.07, \harm, [-5,2,7,11].midiratio,
+	\bufnum, 4224,   \dur, Penv(acc*(1/5),[ts.(20),ts.(5)]), \which, Penv(which,times), \out, Prand((16..32),inf));
 
-caracol4= Pbind(\instrument, \caracol, \amp, 0.2, \harm, [-6,-1,3,7,8,12,19].midiratio,
-	\bufnum, 4224,   \dur, Penv(acc*(1/7),[ts.(20),ts.(4)]), \which, Penv(which,times));
+caracol4= Pbind(\instrument, \caracol, \amp, 0.06, \harm, [-6,-1,3,7,8,12,19].midiratio,
+	\bufnum, 4224,   \dur, Penv(acc*(1/7),[ts.(20),ts.(5)]), \which, Penv(which,times), \out, Prand((16..32),inf));
 
-caracol5= Pbind(\instrument, \caracol, \amp, 0.1, \harm, [0,12,5,-7,15,20,23].midiratio,
-	\bufnum, 4224,   \dur, Penv(acc*(1/11),[ts.(20),ts.(4)]), \which, Penv(which,times));
+caracol5= Pbind(\instrument, \caracol, \amp, 0.05, \harm, [0,12,5,-7,15,20,23].midiratio,
+	\bufnum, 4224,   \dur, Penv(acc*(1/11),[ts.(20),ts.(5)]), \which, Penv(which,times), \out, Prand((16..32),inf));
 
 Pdef(\caracoles,
 	Ppar([caracol1,caracol2,caracol3,caracol4,caracol5],1));
 
 
-~fm1= Pbind(\instrument, \fm, \amp, Penv([0,1,1,0],[20,20,20],'welch'), \freq, 50, \dur, 3.0*0.midiratio.reciprocal).play;
+/*~fm1= Pbind(\instrument, \fm, \amp, Penv([0,1,1,0],[20,20,20],'welch'), \freq, 50, \dur, 3.0*0.midiratio.reciprocal).play;
 
 ~fm2= Pbind(\instrument, \fm, \amp, Penv([0,0.8,0.6,0],[15,25,30],'welch'), \freq, 100, \dur, 3.0*4.midiratio.reciprocal).play;
 
@@ -74,7 +74,7 @@ Pdef(\caracoles,
 
 
 Pdef(\fm,
-	Ppar([~fm1, ~fm2, ~fm3, ~fm4, ~fm5, ~fm6, ~fm7, ~fm8, ~fm9, ~fm10, ~fm11],1));
+	Ppar([~fm1, ~fm2, ~fm3, ~fm4, ~fm5, ~fm6, ~fm7, ~fm8, ~fm9, ~fm10, ~fm11],1));*/
 
 //Pdef(\fm).play
 

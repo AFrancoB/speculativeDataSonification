@@ -54,6 +54,7 @@ var homicidios1995 = CSVFileReader.read(hom++"/INEGI_hom_1995.csv");
 //                              1994
 var homicidios1994 = CSVFileReader.read(hom++"/INEGI_hom_1994.csv");
 
+
 var yearData = { |field|
 	switch ( field,
 		2018, {homicidios2018},
@@ -120,6 +121,7 @@ var edad = { |field|
 	)
 };
 
+var calendario= Array.newClear(25).collect({|j,i|  2008 + (((2118-2008) / 24)*i)}).ceil;
 // number of data points in every file, 4 year age groups of the defunct
 ~nFacts= edad.("noEspecificado") - edad.("totalEdad") + 1;
 
@@ -163,24 +165,12 @@ limites= (
 	].minItem;
 );
 
-(
-//           year -> gender -> ageCount ->  minVal -> maxVal -> [homicidesPerAge]
-~sonify = {| year, gender, ageCount, min, max,  minTranspVal, maxTranspVal |
-	var array, bounds;
-
-	array= Array.fill(ageCount, { | i | (yearData.(year)[edad.("0-1")+i+1][genero.(gender)]).asInt });
-	array= array.collect({|j, index| if(j== "", {0}, {j}) });
-	bounds= (min: array.minItem, max: array.maxItem);
-
-	array.linlin(bounds.min, bounds.max, minTranspVal, maxTranspVal);
-};
-);
-
-~datafy= {| gender, nFacts, from, to, minVal, maxVal, x, y, synth, busOut=0 |
+~plot= {| gender, nFacts, from, to, x, y, width, height|
 	var array;
 	var fromTo = (min: from, max: to);
 	var years = fromTo.max - fromTo.min;
-	var limits, transposed, env;
+	var limits, env;
+	var calendar;
 
 	array= [Array.fill(nFacts, { | i | (yearData.(from)[edad.("totalEdad")+i][genero.(gender)]).asInt }).collect({|j| if(j== "", {0}, {j}) })];
 	array= array ++
@@ -189,37 +179,21 @@ limites= (
 		.collect({|j| if(j== "", {0}, {j}) })});
 	array= array.collect({|j| j[0]});
 	limits= (min: limites.min, max: limites.max);
-	transposed= array.linlin(limits.min,limits.max, minVal, maxVal);
 
-	if( synth=="wave", {
-		~waveShape.(freq: transposed, amp: 0.01, dur: 800,
-			gate:1, out: busOut, ibuf: [10,1000,20,400,500,10,300,700,330], offset: 0.65,
-			amp1: 0.25, amp2: 0.25, amp3: 0.4,
-			att: 20, rel:20,
-			attF: 0.03, decF: 1.2, susFLv: 0.07, relF: 1,
-			rq: 0.1, which: [0,9,2,7,4],
-			lfoFreq: 0.07, lfoWidth: 5
-		);
-	},
-	{
-		~kps.(freq: transposed, amp:0.1, att: 0.1, dur: 800, rel: 0.1, gate: 1);
+	calendar= (from: from - 1994, to: to - 1994);
+	calendar.postln;
 
-	}
-	);
-
-/*	array.plot(name:
-		if(gender=="mujer", {"Número de mujeres asesinadas entre los años "}, {
-			if(gender=="hombre", {"Número de hombres asesinadas entre los años "}, {
-				if(gender=="total", {"Personas asesinadas entre los años "}, {"Asesinatos sin género especificado entre los años "})
+	array.plot(name:
+		if(gender=="mujer", {"Murdered women between "}, {
+			if(gender=="hombre", {"Murdered men between "}, {
+				if(gender=="total", {"Murdered people between "}, {"Murdered non-specified gender between "})
 			})
-		}) ++ from.asString ++ "-" ++ to.asString,
-		bounds: Rect(x.linlin(0,1,0,900),y.linlin(0,1,0,500), 500, 300),
+		}) ++ calendario[calendar.from].asString ++ "-" ++ calendario[calendar.to].asString,
+		bounds: Rect(x.linlin(0,1,0,900),y.linlin(0,1,0,500), width, height),
 		minval: limits.min, maxval: limits.max
-	);*/
+	);
 };
 
+~plot.("total", ~nFacts, 1994, 2018, 0.1, 0.9, 1600, 900);
 
-// THIS IS THE ONE
-//~datafy.("total", ~nFacts, 1994, 2018, 20.midicps, 80.midicps, 0.5, 0.75);
-
-"data loaded".postln;
+"plotter loaded".postln;  
