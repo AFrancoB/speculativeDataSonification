@@ -3,6 +3,7 @@ var path = thisProcess.nowExecutingPath.dirname;
 var synths = path ++ "/synths/Synths.sc";
 var data = path ++ "/data/data.scd";
 var caracoles = path ++ "/caracoles.scd";
+~visuales = path ++ "/visuals.scd";
 s.options.numBuffers = 1024 * 16;
 Server.default.options.memSize= 512000*20;
 Server.default.options.maxNodes=128*1024;
@@ -27,7 +28,7 @@ s.waitForBoot({
 (
 // THIS IS THE ONE
 Tdef(\deep_is_the_well_of_Time).play;
-s.meter
+~visuales.load;
 )
 
 
